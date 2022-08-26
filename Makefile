@@ -5,9 +5,9 @@ DATA=data
 WORKDIR=/root/code
 HUBU=rodalvas
 
-all: gprolog gprolog-cx
+all: $(IMAGES)
 
-.PHONY: gprolog gprolog-cx
+.PHONY: $(IMAGES)
 
 gprolog:
 	docker build $@ --tag $@:latest
@@ -16,6 +16,11 @@ gprolog:
 gprolog-cx:
 	docker build $@ --tag $@:latest
 	docker tag $@:latest $(HUBU)/$@:latest
+
+publish: $(IMAGES)
+	for IMAGE in $(IMAGES); do		\
+	  docker image push $(HUBU)/$$IMAGE;	\
+	done
 
 # sim2c: 
 # 	cp $(COPY) data/sim2c.deb
