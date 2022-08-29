@@ -4,22 +4,23 @@ IMAGES=$(shell ls -1 */Dockerfile | sed -e s:/Dockerfile::)
 DATA=data
 WORKDIR=/root/code
 HUBU=rodalvas
+ARCH=$(shell arch)
 
 all: $(IMAGES)
 
 .PHONY: $(IMAGES)
 
 gprolog:
-	docker build $@ --tag $@:latest
-	docker tag $@:latest $(HUBU)/$@:latest
+	docker build $@ --tag $@:$(ARCH)
+	docker tag $@:$(ARCH) $(HUBU)/$@:$(ARCH)
 
 gprolog-cx:
-	docker build $@ --tag $@:latest
-	docker tag $@:latest $(HUBU)/$@:latest
+	docker build $@ --tag $@:$(ARCH)
+	docker tag $@:$(ARCH) $(HUBU)/$@:$(ARCH)
 
 publish: $(IMAGES)
 	for IMAGE in $(IMAGES); do		\
-	  docker image push $(HUBU)/$$IMAGE;	\
+	  docker image push $(HUBU)/$$IMAGE:$(ARCH);	\
 	done
 
 # sim2c: 
@@ -32,7 +33,7 @@ publish: $(IMAGES)
 run-%::
 	docker run -ti \
 		-v $(PWD)/$(DATA):$(WORKDIR)/$(DATA) \
-		$(subst run-,,$@):latest
+		$(subst run-,,$@):$(ARCH)
 
 # logtalk.deb::
 # 	[ -e $(LGTDEB) ] || wget -q https://logtalk.org/files/$(LGTDEB)
