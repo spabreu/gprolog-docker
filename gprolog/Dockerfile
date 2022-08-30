@@ -15,8 +15,8 @@ WORKDIR ${WORKDIR}
 # -----------------------------------------------------------------------------
 
 RUN echo "## Update and install packages" \
-    && apt -y update \
-    && apt install -y --no-install-recommends \
+    && apt-get -y update \
+    && apt-get install -y --no-install-recommends \
         binutils \
         build-essential \
         ca-certificates \
@@ -24,7 +24,7 @@ RUN echo "## Update and install packages" \
         git \
         autoconf \
         gcc \
-    && apt clean \
+    && apt-get clean \
     && echo "## Done" \
     && mkdir -p ${SRC}
 
@@ -41,5 +41,4 @@ RUN echo "## Configure and make GNU Prolog" \
     && make \
     && make install-system install-links
 
-CMD gplc
 CMD gprolog

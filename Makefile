@@ -1,26 +1,27 @@
 IMAGES=$(shell ls -1 */Dockerfile | sed -e s:/Dockerfile::)
 #COPY=sim2c_2.0-1_all.deb
 
-DATA=data
-WORKDIR=/root/code
+CODE=code
+WORKDIR=/root/$(CODE)
 HUBU=rodalvas
-ARCH=$(shell arch)
+# TAG=$(shell arch)
+TAG=latest
 
 all: $(IMAGES)
 
 .PHONY: $(IMAGES)
 
 gprolog:
-	docker build $@ --tag $@:$(ARCH)
-	docker tag $@:$(ARCH) $(HUBU)/$@:$(ARCH)
+	docker build $@ --tag $@:$(TAG)
+	docker tag $@:$(TAG) $(HUBU)/$@:$(TAG)
 
-gprolog-cx:
-	docker build $@ --tag $@:$(ARCH)
-	docker tag $@:$(ARCH) $(HUBU)/$@:$(ARCH)
+gprolog-cx: gprolog
+	docker build $@ --tag $@:$(TAG)
+	docker tag $@:$(TAG) $(HUBU)/$@:$(TAG)
 
 publish: $(IMAGES)
 	for IMAGE in $(IMAGES); do		\
-	  docker image push $(HUBU)/$$IMAGE:$(ARCH);	\
+	  docker image push $(HUBU)/$$IMAGE:$(TAG);	\
 	done
 
 # sim2c: 
@@ -32,15 +33,15 @@ publish: $(IMAGES)
 
 run-%::
 	docker run -ti \
-		-v $(PWD)/$(DATA):$(WORKDIR)/$(DATA) \
-		$(subst run-,,$@):$(ARCH)
+		-v $(PWD)/$(CODE):$(WORKDIR) \
+		$(subst run-,,$@):$(TAG) \
+			$(CMD)
 
 # logtalk.deb::
 # 	[ -e $(LGTDEB) ] || wget -q https://logtalk.org/files/$(LGTDEB)
 # 	ln -sf $(LGTDEB) logtalk.deb
 
 clean:
-	rm -f $(DATA)/*
 	docker container prune -f
 	docker image prune -f
 	docker image rm -f $(IMAGES)

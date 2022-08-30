@@ -25,5 +25,4 @@ RUN echo "## Configure and make Contexts branch" \
     && make \
     && make install-system install-links
 
-CMD gplc
 CMD gprolog-cx
